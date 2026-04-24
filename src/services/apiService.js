@@ -40,4 +40,16 @@ export const userService = {
   getById: (id) => api.get(`/User/${id}`),
 };
 
+export const uploadService = {
+  uploadImage: async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post('/Uploads/image', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  }
+};
+
 export default api;

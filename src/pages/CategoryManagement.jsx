@@ -8,7 +8,7 @@ import {
   X,
   Layers
 } from 'lucide-react';
-import { categoryService } from '../services/apiService';
+import { categoryService, uploadService } from '../services/apiService';
 
 const CategoryManagement = () => {
   const [categories, setCategories] = useState([]);
@@ -17,7 +17,8 @@ const CategoryManagement = () => {
   const [editingCategory, setEditingCategory] = useState(null);
   
   const [formData, setFormData] = useState({
-    name: ''
+    name: '',
+    image: ''
   });
 
   useEffect(() => {
@@ -39,10 +40,10 @@ const CategoryManagement = () => {
   const handleOpenModal = (category = null) => {
     if (category) {
       setEditingCategory(category);
-      setFormData({ name: category.name });
+      setFormData({ name: category.name, image: category.image || '' });
     } else {
       setEditingCategory(null);
-      setFormData({ name: '' });
+      setFormData({ name: '', image: '' });
     }
     setShowModal(true);
   };
@@ -53,7 +54,7 @@ const CategoryManagement = () => {
       if (editingCategory) {
         await categoryService.update(editingCategory.id, { ...formData, id: editingCategory.id });
       } else {
-        await categoryService.create(formData);
+        await categoryService.create({ ...formData, id: 0 });
       }
       setShowModal(false);
       fetchData();
@@ -120,8 +121,12 @@ const CategoryManagement = () => {
                 <tr key={category.id} className="hover:bg-slate-50 transition-colors group">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center shrink-0">
-                        <Layers size={20} />
+                      <div className="w-10 h-10 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center shrink-0 overflow-hidden">
+                        {category.image ? (
+                          <img src={category.image} alt={category.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <Layers size={20} />
+                        )}
                       </div>
                       <span className="font-bold text-slate-900">{category.name}</span>
                     </div>
@@ -185,11 +190,47 @@ const CategoryManagement = () => {
                 <label className="text-sm font-semibold text-slate-700">Tên danh mục</label>
                 <input 
                   value={formData.name}
-                  onChange={(e) => setFormData({ name: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="input-field" 
                   placeholder="Ví dụ: Thiết bị điện tử" 
                   required 
                 />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-sm font-semibold text-slate-700">Hình ảnh</label>
+                <div className="flex flex-col gap-2">
+                  <div className="flex gap-2 items-center">
+                    <input 
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          try {
+                            const res = await uploadService.uploadImage(file);
+                            setFormData(prev => ({ ...prev, image: res.data.url }));
+                          } catch (error) {
+                            console.error('Lỗi khi tải ảnh lên:', error);
+                            alert('Không thể tải ảnh lên. Vui lòng thử lại.');
+                          }
+                        }
+                      }}
+                      className="input-field flex-1 cursor-pointer file:cursor-pointer file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" 
+                    />
+                    {formData.image && (
+                      <div className="w-[42px] h-[42px] rounded-xl border border-slate-200 overflow-hidden shrink-0">
+                        <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                  </div>
+                  <input 
+                    value={formData.image}
+                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                    className="input-field text-xs text-slate-500" 
+                    placeholder="Hoặc dán URL/Link hình ảnh trực tiếp vào đây..." 
+                  />
+                </div>
               </div>
               
               <div className="pt-4 flex gap-3">

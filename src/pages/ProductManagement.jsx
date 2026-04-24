@@ -12,7 +12,7 @@ import {
   Check,
   X
 } from 'lucide-react';
-import { productService, categoryService } from '../services/apiService';
+import { productService, categoryService, uploadService } from '../services/apiService';
 
 const ProductManagement = () => {
   const [products, setProducts] = useState([]);
@@ -86,13 +86,14 @@ const ProductManagement = () => {
     try {
       const payload = {
         ...formData,
-        price: parseFloat(formData.price),
-        quantity: parseInt(formData.quantity),
-        categoryId: parseInt(formData.categoryId)
+        price: formData.price === '' ? 0 : parseFloat(formData.price),
+        quantity: formData.quantity === '' ? 0 : parseInt(formData.quantity),
+        categoryId: formData.categoryId === '' ? 0 : parseInt(formData.categoryId),
+        id: editingProduct ? editingProduct.id : 0
       };
 
       if (editingProduct) {
-        await productService.update(editingProduct.id, { ...payload, id: editingProduct.id });
+        await productService.update(editingProduct.id, payload);
       } else {
         await productService.create(payload);
       }
@@ -316,14 +317,40 @@ const ProductManagement = () => {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-sm font-semibold text-slate-700">Link hình ảnh</label>
-                  <input 
-                    name="image"
-                    value={formData.image}
-                    onChange={handleInputChange}
-                    className="input-field" 
-                    placeholder="https://..." 
-                  />
+                  <label className="text-sm font-semibold text-slate-700">Hình ảnh</label>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex gap-2 items-center">
+                      <input 
+                        type="file"
+                        accept="image/*"
+                        onChange={async (e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            try {
+                              const res = await uploadService.uploadImage(file);
+                              setFormData(prev => ({ ...prev, image: res.data.url }));
+                            } catch (error) {
+                              console.error('Lỗi khi tải ảnh lên:', error);
+                              alert('Không thể tải ảnh lên. Vui lòng thử lại.');
+                            }
+                          }
+                        }}
+                        className="input-field flex-1 cursor-pointer file:cursor-pointer file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" 
+                      />
+                      {formData.image && (
+                        <div className="w-[42px] h-[42px] rounded-xl border border-slate-200 overflow-hidden shrink-0">
+                          <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                    </div>
+                    <input 
+                      name="image"
+                      value={formData.image}
+                      onChange={handleInputChange}
+                      className="input-field text-xs text-slate-500" 
+                      placeholder="Hoặc dán URL/Link hình ảnh trực tiếp vào đây..." 
+                    />
+                  </div>
                 </div>
 
                 <div className="col-span-1 sm:col-span-2 space-y-1">
