@@ -102,13 +102,21 @@ const OrderManagement = () => {
                     {order.totalPrice?.toLocaleString()}đ
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-bold
-                      ${order.status === 'Completed' ? 'bg-green-100 text-green-700' : 
-                        order.status === 'Pending' ? 'bg-amber-100 text-amber-700' : 
-                        order.status === 'Cancelled' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-700'}
-                    `}>
-                      {order.status || 'Chờ xử lý'}
-                    </span>
+                    {(() => {
+                      const statusMap = {
+                        0: { label: 'Chờ xử lý', color: 'bg-amber-100 text-amber-700' },
+                        1: { label: 'Đã thanh toán', color: 'bg-blue-100 text-blue-700' },
+                        2: { label: 'Đang giao hàng', color: 'bg-indigo-100 text-indigo-700' },
+                        3: { label: 'Hoàn thành', color: 'bg-green-100 text-green-700' },
+                        4: { label: 'Đã hủy', color: 'bg-red-100 text-red-700' }
+                      };
+                      const s = statusMap[order.status] || { label: 'Không xác định', color: 'bg-slate-100 text-slate-700' };
+                      return (
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${s.color}`}>
+                          {s.label}
+                        </span>
+                      );
+                    })()}
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-500">
                     {new Date(order.createdAt).toLocaleString('vi-VN')}
