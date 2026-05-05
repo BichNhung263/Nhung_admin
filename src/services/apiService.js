@@ -36,8 +36,8 @@ export const orderService = {
 };
 
 export const userService = {
-  getAll: () => api.get('/User'),
-  getById: (id) => api.get(`/User/${id}`),
+  getAll: () => api.get('/Users'),
+  getById: (id) => api.get(`/Users/${id}`),
 };
 
 export const uploadService = {

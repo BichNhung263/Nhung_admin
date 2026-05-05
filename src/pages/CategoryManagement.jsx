@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Plus, 
-  Search, 
-  Edit2, 
-  Trash2, 
+import {
+  Plus,
+  Search,
+  Edit2,
+  Trash2,
   Check,
   X,
   Layers
@@ -15,7 +15,7 @@ const CategoryManagement = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
-  
+
   const [formData, setFormData] = useState({
     name: '',
     image: ''
@@ -81,7 +81,7 @@ const CategoryManagement = () => {
           <h2 className="text-2xl font-bold text-slate-900">Quản lý Danh mục</h2>
           <p className="text-slate-500 text-sm">Phân loại sản phẩm của bạn một cách hợp lý.</p>
         </div>
-        <button 
+        <button
           onClick={() => handleOpenModal()}
           className="btn-primary flex items-center justify-center gap-2"
         >
@@ -94,9 +94,9 @@ const CategoryManagement = () => {
         <div className="p-4 border-b border-slate-100 flex flex-col md:flex-row gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <input 
-              type="text" 
-              placeholder="Tìm kiếm danh mục..." 
+            <input
+              type="text"
+              placeholder="Tìm kiếm danh mục..."
               className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-primary-500 outline-none transition-all text-sm"
             />
           </div>
@@ -142,13 +142,13 @@ const CategoryManagement = () => {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button 
+                      <button
                         onClick={() => handleOpenModal(category)}
                         className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                       >
                         <Edit2 size={18} />
                       </button>
-                      <button 
+                      <button
                         onClick={() => handleDelete(category.id)}
                         className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                       >
@@ -177,23 +177,23 @@ const CategoryManagement = () => {
               <h3 className="text-xl font-bold text-slate-900">
                 {editingCategory ? 'Sửa danh mục' : 'Thêm danh mục mới'}
               </h3>
-              <button 
+              <button
                 onClick={() => setShowModal(false)}
                 className="w-10 h-10 flex items-center justify-center text-slate-400 hover:bg-slate-50 rounded-full transition-colors"
               >
                 <X size={20} />
               </button>
             </div>
-            
+
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div className="space-y-1">
                 <label className="text-sm font-semibold text-slate-700">Tên danh mục</label>
-                <input 
+                <input
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="input-field" 
-                  placeholder="Ví dụ: Thiết bị điện tử" 
-                  required 
+                  className="input-field"
+                  placeholder="Ví dụ: Thiết bị điện tử"
+                  required
                 />
               </div>
 
@@ -201,7 +201,7 @@ const CategoryManagement = () => {
                 <label className="text-sm font-semibold text-slate-700">Hình ảnh</label>
                 <div className="flex flex-col gap-2">
                   <div className="flex gap-2 items-center">
-                    <input 
+                    <input
                       type="file"
                       accept="image/*"
                       onChange={async (e) => {
@@ -216,7 +216,7 @@ const CategoryManagement = () => {
                           }
                         }
                       }}
-                      className="input-field flex-1 cursor-pointer file:cursor-pointer file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" 
+                      className="input-field flex-1 cursor-pointer file:cursor-pointer file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100"
                     />
                     {formData.image && (
                       <div className="w-[42px] h-[42px] rounded-xl border border-slate-200 overflow-hidden shrink-0">
@@ -224,24 +224,24 @@ const CategoryManagement = () => {
                       </div>
                     )}
                   </div>
-                  <input 
+                  <input
                     value={formData.image}
                     onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                    className="input-field text-xs text-slate-500" 
-                    placeholder="Hoặc dán URL/Link hình ảnh trực tiếp vào đây..." 
+                    className="input-field text-xs text-slate-500"
+                    placeholder="Hoặc dán URL/Link hình ảnh trực tiếp vào đây..."
                   />
                 </div>
               </div>
-              
+
               <div className="pt-4 flex gap-3">
-                <button 
+                <button
                   type="button"
                   onClick={() => setShowModal(false)}
                   className="flex-1 btn-secondary"
                 >
                   Hủy bỏ
                 </button>
-                <button 
+                <button
                   type="submit"
                   className="flex-[2] btn-primary flex items-center justify-center gap-2"
                 >
