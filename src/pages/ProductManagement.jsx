@@ -12,7 +12,7 @@ import {
   Check,
   X
 } from 'lucide-react';
-import { productService, categoryService, uploadService } from '../services/apiService';
+import { productService, categoryService, uploadService, getImageUrl } from '../services/apiService';
 
 const ProductManagement = () => {
   const [products, setProducts] = useState([]);
@@ -176,7 +176,7 @@ const ProductManagement = () => {
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-lg bg-slate-100 flex-shrink-0 flex items-center justify-center overflow-hidden border border-slate-100">
                         {product.image ? (
-                          <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                          <img src={getImageUrl(product.image)} alt={product.name} className="w-full h-full object-cover" />
                         ) : (
                           <ImageIcon size={20} className="text-slate-400" />
                         )}
@@ -339,7 +339,7 @@ const ProductManagement = () => {
                       />
                       {formData.image && (
                         <div className="w-[42px] h-[42px] rounded-xl border border-slate-200 overflow-hidden shrink-0">
-                          <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                          <img src={getImageUrl(formData.image)} alt="Preview" className="w-full h-full object-cover" />
                         </div>
                       )}
                     </div>

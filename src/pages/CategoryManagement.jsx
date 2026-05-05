@@ -8,7 +8,7 @@ import {
   X,
   Layers
 } from 'lucide-react';
-import { categoryService, uploadService } from '../services/apiService';
+import { categoryService, uploadService, getImageUrl } from '../services/apiService';
 
 const CategoryManagement = () => {
   const [categories, setCategories] = useState([]);
@@ -123,7 +123,7 @@ const CategoryManagement = () => {
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center shrink-0 overflow-hidden">
                         {category.image ? (
-                          <img src={category.image} alt={category.name} className="w-full h-full object-cover" />
+                          <img src={getImageUrl(category.image)} alt={category.name} className="w-full h-full object-cover" />
                         ) : (
                           <Layers size={20} />
                         )}
@@ -220,7 +220,7 @@ const CategoryManagement = () => {
                     />
                     {formData.image && (
                       <div className="w-[42px] h-[42px] rounded-xl border border-slate-200 overflow-hidden shrink-0">
-                        <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                        <img src={getImageUrl(formData.image)} alt="Preview" className="w-full h-full object-cover" />
                       </div>
                     )}
                   </div>

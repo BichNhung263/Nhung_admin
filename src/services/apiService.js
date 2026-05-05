@@ -1,6 +1,18 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://hothibichnhung-2123110314.onrender.com/api';
+const BASE_URL = 'https://hothibichnhung-2123110314.onrender.com';
+const API_BASE_URL = `${BASE_URL}/api`;
+
+export const getImageUrl = (url) => {
+  if (!url) return '';
+  if (url.includes('localhost:7038')) {
+    return url.replace('https://localhost:7038', BASE_URL);
+  }
+  if (url.startsWith('/')) {
+    return `${BASE_URL}${url}`;
+  }
+  return url;
+};
 
 const api = axios.create({
   baseURL: API_BASE_URL,
