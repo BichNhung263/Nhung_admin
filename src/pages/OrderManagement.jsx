@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Search, 
   Eye, 
@@ -11,6 +12,7 @@ import {
 import { orderService } from '../services/apiService';
 
 const OrderManagement = () => {
+  const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -37,6 +39,36 @@ const OrderManagement = () => {
         fetchOrders();
       } catch (error) {
         console.error('Lỗi khi xóa đơn hàng:', error);
+      }
+    }
+  };
+
+  const handleStatusChange = async (orderId, newStatus) => {
+    try {
+      const orderToUpdate = orders.find(o => o.id === orderId);
+      if (!orderToUpdate) return;
+
+      // Chuẩn bị dữ liệu gửi lên backend (chỉ gửi các trường cần thiết)
+      const updateData = {
+        id: orderId,
+        userId: orderToUpdate.user?.id || 0,
+        totalPrice: orderToUpdate.totalPrice,
+        status: parseInt(newStatus),
+        createdAt: orderToUpdate.createdAt
+      };
+
+      await orderService.update(orderId, updateData);
+      
+      // Cập nhật state local
+      setOrders(orders.map(o => o.id === orderId ? { ...o, status: parseInt(newStatus) } : o));
+      
+    } catch (error) {
+      console.error('Lỗi khi cập nhật trạng thái:', error);
+      // Nếu là lỗi CORS hoặc Network, có thể do backend chưa cấu hình đúng
+      if (error.message === 'Network Error') {
+        alert('Lỗi kết nối (CORS). Vui lòng kiểm tra cấu hình Backend hoặc liên hệ quản trị viên.');
+      } else {
+        alert('Lỗi khi cập nhật trạng thái đơn hàng.');
       }
     }
   };
@@ -102,28 +134,27 @@ const OrderManagement = () => {
                     {order.totalPrice?.toLocaleString()}đ
                   </td>
                   <td className="px-6 py-4">
-                    {(() => {
-                      const statusMap = {
-                        0: { label: 'Chờ xử lý', color: 'bg-amber-100 text-amber-700' },
-                        1: { label: 'Đã thanh toán', color: 'bg-blue-100 text-blue-700' },
-                        2: { label: 'Đang giao hàng', color: 'bg-indigo-100 text-indigo-700' },
-                        3: { label: 'Hoàn thành', color: 'bg-green-100 text-green-700' },
-                        4: { label: 'Đã hủy', color: 'bg-red-100 text-red-700' }
-                      };
-                      const s = statusMap[order.status] || { label: 'Không xác định', color: 'bg-slate-100 text-slate-700' };
-                      return (
-                        <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${s.color}`}>
-                          {s.label}
-                        </span>
-                      );
-                    })()}
+                    <select
+                      value={order.status}
+                      onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                      className={`text-xs font-bold py-1.5 px-3 rounded-lg border border-slate-200 outline-none cursor-pointer transition-all hover:border-primary-400 focus:ring-2 focus:ring-primary-100 bg-white min-w-[140px]`}
+                    >
+                      <option value="0">Chờ duyệt</option>
+                      <option value="1">Đã xác nhận</option>
+                      <option value="2">Đang giao hàng</option>
+                      <option value="3">Đã giao</option>
+                      <option value="4">Đã hủy</option>
+                    </select>
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-500">
                     {new Date(order.createdAt).toLocaleString('vi-VN')}
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg">
+                      <button 
+                        onClick={() => navigate(`/orders/${order.id}`)}
+                        className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg"
+                      >
                         <Eye size={18} />
                       </button>
                       <button 
